@@ -1,0 +1,84 @@
+---
+title: "Opgave 1"
+author: "..."
+output: pdf_document
+---
+
+# Data
+Data voor de eerste vragen van deze opgave: crimepubs.csv. Zie crimepubs.docx voor een korte beschrijving van de variabelen.
+
+Voor het tweede deel van de vragen staat de data in crime2.csv. Zie crime2.docx voor een korte beschrijving van de variabelen.
+
+# Inleveren
+Inleveren UITSLUITEND via Blackboard. 
+
+# Inleiding (vraag 1 t/m 3)
+De data bevatten een aantal oude gegevens over misdadigheid. De vraag die we gaan behandelen is: Welke factor (of factoren) dragen er toe bij dat men wel of niet misdaden pleegt? 
+
+# Vraag 1 (crimepubs.csv)
+Inlezen en bewerken van de data. Eerst moeten we de data inlezen en nutteloze variabelen verwijderen. 
+
+a. Laad de data (crimepubs.csv).
+```{r}
+# ...
+```
+
+b. Verwijder de variabelen Region en County. Deze nemen we niet mee met de analyse.
+```{r}
+# ...
+```
+
+# Vraag 2 (crimepubs.csv)
+a. Plot alle data om alvast een idee te krijgen van eventuele lineaire verbanden. Bepaal ook de correlatie tussen de variabelen.
+```{r}
+# ...
+```
+
+b. Bespreek de resultaten. Welke verbanden zou je op basis hiervan kunnen vermoeden?
+
+> ... 
+
+# Vraag 3 (crimepubs.csv)
+Bouw een lineair-regressie model voor deze data. De afhankelijke variabele is crim. In eerste instantie gaan we uit van alle andere variabelen als onafhankelijke variabelen.
+
+a. Bouw een lineair regressie model zoals hierboven beschreven. Geef de summary van dit model.
+```{r}
+# ...
+```
+
+b. Laat nu één voor een de niet-significante variabelen weg totdat je een model hebt met daarin alleen nog significante variabelen. Geef de summary van dit model.
+```{r}
+# ...
+```
+
+c. Bespreek de resultaten. Wat is je conclusie? 
+
+> ...
+
+# Vraag 4 (crime2.csv)
+Gebruik lineaire regressie voor een onderzoek naar het verschil tussen gewelddadige misdaad en misdaad in het algemeen. Gebruik hiervoor de tweede dataset (crime2.csv). 
+
+De hoofdvraag is: Zijn er verschillen tussen gewelddadige misdaad en misdaad in het algemeen?
+
+Subvragen zijn wat de bepalende factoren zijn hierbij.
+
+a. Uit de beschrijving blijkt al dat variabelen X1 en X2 met elkaar samenhangen. Plot deze data en bepaal de correlatie tussen X1 en X2 om dit duidelijk te maken. 
+```{r}
+# ...
+```
+	
+Voor het vervolg gaan we een model maken van X1 als functie van X3 t/m X7, en ook een model van X2 als functie van X3 t/m X7
+b. Maak een lineair regressiemodel van X1 als functie van X3 t/m X7. Verwijder daarna steeds 1 variabele totdat alleen significante variabelen overblijven. Geef de summary van het uiteindelijke model.
+```{r}
+# ...
+```
+
+c. Maak een lineair regressiemodel van X2 als functie van X3 t/m X7. Verwijder daarna steeds 1 variabele totdat alleen significante variabelen overblijven. Geef de summary van het uiteindelijke model.
+```{r}
+# ...
+```
+
+d. Bespreek de resultaten. Wat is volgens deze modellen het belangrijkste verschil tussen X1 (algehele misdaad) en X2 (gewelddadige misdaad)? 
+
+> ...
+

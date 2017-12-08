@@ -1,0 +1,137 @@
+---
+title: "Opgave 2"
+author: 'Marco Geertsma'
+output: pdf_document
+---
+
+# Data
+Data voor deze opgave: telcotrain.csv en telcotest.csv. Documentatie van de data: telco.docx
+
+# Inleveren
+Inleveren UITSLUITEND via Blackboard. 
+
+# Inleiding
+De opgave gaat over een belangrijke vraag uit de Telecomindustrie: hoe houd ik mijn klanten? 
+
+In het databestand staan een aantal gegevens over klanten, zoals het aantal telefoontjes per dagdeel, of ze voicemail hebben, en nog zo het een en ander. De belangrijke variabele is de "Churn", dat wil zeggen of de klanten bij deze provider zijn vertrokken in de periode waarin deze data is verzameld. (Churn=YES betekent de klant is vertrokken). 
+
+De provider wil graag kunnen voorspellen welke klanten waarschijnlijk op het punt staan te vertrekken, zodat hij deze kan benaderen met een goed aanbod.
+
+De vraag is dus: hoe groot is de kans op Churn (vertrek) en  welke variabelen spelen daarbij wel en niet een rol. Dit gaan we doen met de methode "logistic regression".
+
+De werkwijze is grotendeels hetzelfde als bij de videoreeks "Modeling the Expert".
+
+# Vraag 1
+Laad de data in. De data bevat twee kolommen die je beter kan verwijderen (de eerste en de derde).
+Maak daarna een Logistic Regression model voor het bepalen van de kans op Churn:
+
+a. Laad de data (telcotrain.csv), verwijder de variabelen in kolom 1 en kolom 3, en bouw dan een logistic regression model voor de kans dat de Churn variabele de waarde YES heeft  (afhankelijke variabele: Churn), afhankelijk van alle andere variabelen.1 Druk de summary af van het model om te bepalen welke variabelen significant zijn in het model.
+
+```{r}
+telcotrain = read.csv('telcotrain.csv')
+telcotrain$X <- NULL
+telcotrain$ZIP <- NULL
+#install.packages("caTools")
+#library(caTools)
+churnYes = subset(telcotrain, Churn == "YES")
+churnNo = subset(telcotrain, Churn == "NO")
+glmChurn = glm(Churn ~ ACL + IP + VMP + NVM + TDM + TDC + TDCH + TEM + TEC + TECH + TNM + TNC + TNCH + TIM + TIC + TICH + CSC, data=telcotrain, family=binomial)
+summary(glmChurn)
+```
+
+b. Verwijder één voor één de niet-significante variabelen uit het model, net zolang tot alleen significante variabelen over zijn. Noteer steeds wat de AIC-waarde is (als het goed is wordt deze steeds kleiner).
+
+```{r}
+telcotrain$TEC <- NULL
+glmChurn = glm(Churn ~ ACL + IP + VMP + NVM + TDM + TDC + TDCH + TEM + TECH + TNM + TNC + TNCH + TIM + TIC + TICH + CSC, data=telcotrain, family=binomial)
+summary(glmChurn)
+
+telcotrain$TNC <- NULL
+glmChurn = glm(Churn ~ ACL + IP + VMP + NVM + TDM + TDC + TDCH + TEM + TECH + TNM + TNCH + TIM + TIC + TICH + CSC, data=telcotrain, family=binomial)
+summary(glmChurn)
+
+telcotrain$TIM <- NULL
+glmChurn = glm(Churn ~ ACL + IP + VMP + NVM + TDM + TDC + TDCH + TEM + TECH + TNM + TNCH + TIC + TICH + CSC, data=telcotrain, family=binomial)
+summary(glmChurn)
+
+telcotrain$TDM <- NULL
+glmChurn = glm(Churn ~ ACL + IP + VMP + NVM + TDC + TDCH + TEM + TECH + TNM + TNCH + TIC + TICH + CSC, data=telcotrain, family=binomial)
+summary(glmChurn)
+
+telcotrain$TNCH <- NULL
+glmChurn = glm(Churn ~ ACL + IP + VMP + NVM + TDC + TEM + TECH + TNM + TIC + TICH + CSC, data=telcotrain, family=binomial)
+summary(glmChurn)
+
+telcotrain$TECH <- NULL
+glmChurn = glm(Churn ~ ACL + IP + VMP + NVM + TDC + TEM + TNM + TNCH + TIC + TICH + CSC, data=telcotrain, family=binomial)
+summary(glmChurn)
+
+telcotrain$ACL <- NULL
+glmChurn = glm(Churn ~ IP + VMP + NVM + TDCH + TDC + TEM + TNM + TIC + TICH + CSC, data=telcotrain, family=binomial)
+summary(glmChurn)
+
+telcotrain$TDC <- NULL
+glmChurn = glm(Churn ~ IP + VMP + NVM + TDCH + TEM + TNM + TIC + TICH + CSC, data=telcotrain, family=binomial)
+summary(glmChurn)
+
+```
+
+c. In het vervolg moet je een aantal malen de Confusion Matrix en kengetallen (accuracy, specificity, sensitivity) bepalen, voor verschillende drempelwaarden. Schrijf een functie waarmee je deze zaken automatisch (en correct) uitrekent, waarna je ze kan afdrukken. Als input geef je het model, de (volledige) naam van de afhankelijke variabele en de drempelwaarde. De functie berekent dan de juiste confusion matrix en de waarden voor accuracy, specificity, sensitivity. Zorg dat deze worden afgedrukt op de R-console. 
+
+```{r}
+confusionMatrix = function(model, variable, threshold){
+  pred = predict(mode, type="response")
+  conMatrix = table(variable, pred > threshold)
+  
+  sens = conMatrix["YES", "TRUE"]/(conMatrix["YES", "TRUE"] + conMatrix["YES", "FALSE"])
+  spec = conMatrix["NO","FALSE"]/(conMatrix["NO","FALSE"] + conMatrix["NO","TRUE"])
+  acc = (conMatrix["NO","FALSE"] + conMatrix["YES","TRUE"])/(conMatrix["NO","TRUE"] + conMatrix["YES","TRUE"] + conMatrix["NO","FALSE"] + conMatrix["YES","FALSE"])
+  
+  cat("\nsensitivity: ",sens,"\nspecificity: ",spec,"\naccuracy: ",acc,"\nconfusion matrix: ",print(conMatrix))
+}
+```
+
+d. Bepaal de Confusion Matrix voor de gegevens volgens het uiteindelijke model. Daaraan kan je zien in hoeverre dat model de gegevens goed kan voorspellen Doe dit voor een drempelwaarde van 0.1, 0.2, 0.6 en 0.9. Bereken steeds de accuracy, de specificity en de sensitivity. 
+
+```{r}
+confusionMatrix(telcotrain, telcotrain$Churn, 0.1)
+```
+
+# Vraag 2
+Bepaal de ROC-curve voor dit model.
+
+De ROC-curve geeft aan hoe de specificity en sensitivity afhangen van de gekozen drempelwaarden. 
+	
+Laad eerst de ROCR-bibliotheek in. 
+
+```{r}
+# ...
+```
+
+a. Maak een ROC-plot van het logistic regression model uit vraag 1. Gebruik colorize en eventueel print.cutoffs.at om het effect van verschillende drempelwaarden beter te kunen zien.
+
+```{r}
+# ...
+```
+
+# Vraag 3
+Vergelijk het model met een testset om te zien hoe goed het model nieuwe gegevens kan voorspellen.
+
+We gaan nu het model uit vraag 1 vergelijken met een testset om te zien hoe goed het model nieuwe gegevens kan voorspellen. De testset heet telcotest.csv en bevat extra gegevens volgens dezelfde data structuur als telcotrain. 
+
+Hint: gebruik de parameter newdata in de functie predict om de nieuwe resultaten te voorspellen.
+
+Laad deze testdata in een apart dataframe.
+
+a. Gebruik de predict() functie en het model uit vraag 1 om de kans op Churn voor deze testdata te voorspellen.
+
+```{r}
+# ...
+```
+
+b. Bepaal de confusion matrix voor de testset volgens dit model. Doe dit voor de bij 2a bepaalde optimale drempelwaarde Bereken de accuracy, specificity en de sensitivity.
+
+```{r}
+# ...
+```
+
