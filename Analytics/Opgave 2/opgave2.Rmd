@@ -63,7 +63,7 @@ glmChurn = glm(Churn ~ ACL + IP + VMP + NVM + TDC + TEM + TECH + TNM + TIC + TIC
 summary(glmChurn)
 
 telcotrain$TECH <- NULL
-glmChurn = glm(Churn ~ ACL + IP + VMP + NVM + TDC + TEM + TNM + TNCH + TIC + TICH + CSC, data=telcotrain, family=binomial)
+glmChurn = glm(Churn ~ ACL + IP + VMP + NVM + TDC + TEM + TNM + TIC + TICH + CSC, data=telcotrain, family=binomial)
 summary(glmChurn)
 
 telcotrain$ACL <- NULL
@@ -80,7 +80,7 @@ c. In het vervolg moet je een aantal malen de Confusion Matrix en kengetallen (a
 
 ```{r}
 confusionMatrix = function(model, variable, threshold){
-  pred = predict(mode, type="response")
+  pred = predict(model, type="response")
   conMatrix = table(variable, pred > threshold)
   
   sens = conMatrix["YES", "TRUE"]/(conMatrix["YES", "TRUE"] + conMatrix["YES", "FALSE"])
@@ -94,9 +94,11 @@ confusionMatrix = function(model, variable, threshold){
 d. Bepaal de Confusion Matrix voor de gegevens volgens het uiteindelijke model. Daaraan kan je zien in hoeverre dat model de gegevens goed kan voorspellen Doe dit voor een drempelwaarde van 0.1, 0.2, 0.6 en 0.9. Bereken steeds de accuracy, de specificity en de sensitivity. 
 
 ```{r}
-confusionMatrix(telcotrain, telcotrain$Churn, 0.1)
+confusionMatrix(glmChurn, telcotrain$Churn, 0.1)
+confusionMatrix(glmChurn, telcotrain$Churn, 0.2)
+confusionMatrix(glmChurn, telcotrain$Churn, 0.6)
+confusionMatrix(glmChurn, telcotrain$Churn, 0.9)
 ```
-
 # Vraag 2
 Bepaal de ROC-curve voor dit model.
 
